@@ -33,3 +33,21 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 // ADDED ROUTES
+
+// RUTAS PROTEGIDAS PARA ADMIN
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // ##### EJEMPLO: #####
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard');
+    // })->name('dashboard');
+});
+
+// RUTAS PROTEGIDAS PARA MODERADOR
+Route::middleware(['auth', 'role:mod'])->group(function () {
+    // Aqui va la ruta
+});
+
+// RUTAS PROTEGIDAS PARA USUARIO
+Route::middleware(['auth', 'role:user'])->group(function () {
+
+});
