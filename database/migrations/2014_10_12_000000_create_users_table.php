@@ -22,7 +22,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->string('location', 100)->nullable();
             $table->integer('reputation')->default(0);
-            $table->enum('status', ['activo', 'suspendido', 'inactivo'])->default('activo');
+            $table->enum('status', ['active', 'suspended', 'inactive'])->default('active');
             $table->timestamps();
         });
 
