@@ -36,10 +36,9 @@ require __DIR__.'/auth.php';
 
 // RUTAS PROTEGIDAS PARA ADMIN
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    // ##### EJEMPLO: #####
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->name('dashboard');
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin-dashboard');
 });
 
 // RUTAS PROTEGIDAS PARA MODERADOR
