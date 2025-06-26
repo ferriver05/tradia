@@ -49,5 +49,7 @@ Route::middleware(['auth', 'role:mod'])->group(function () {
 
 // RUTAS PROTEGIDAS PARA USUARIO
 Route::middleware(['auth', 'role:user'])->group(function () {
-
+    Route::get('/user/dashboard', function () {
+        return view('mod.dashboard');
+    })->name('mod-dashboard');
 });
