@@ -61,22 +61,22 @@
 
                     <!-- Campo de Email (Combinado) -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Usuario o Correo Electrónico
+                        <label for="login" class="block text-sm font-medium text-gray-700 mb-2">
+                            Alias o correo
                         </label>
                         <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            value="{{ old('email') }}"
-                            required
-                            autofocus
-                            autocomplete="username"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('email') border-red-500 @enderror"
-                            placeholder="tu@email.com"
-                        >
-                        @error('email')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        type="text" 
+                        id="login" 
+                        name="login" 
+                        value="{{ old('login') }}"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('login') border-red-500 @enderror"
+                        placeholder="Correo o alias"
+                        />
+                        @error('login')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -101,11 +101,6 @@
 
                     <!-- Remember Me (De Breeze, agregado a tu diseño) -->
                     <div class="flex items-center justify-between">
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-red-600 shadow-sm focus:ring-red-500" name="remember">
-                            <span class="ml-2 text-sm text-gray-600">Recordarme</span>
-                        </label>
-                        
                         <!-- Olvidé mi contraseña (Funcional con Breeze) -->
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}" class="text-sm text-red-600 hover:text-red-700 transition duration-200">
