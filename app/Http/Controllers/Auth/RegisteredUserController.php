@@ -31,21 +31,30 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name'      => ['required', 'string', 'max:100'],
+            'alias'     => [
+                'required',
+                'string',
+                'max:30',
+                'unique:users,alias',
+                'regex:/^[A-Za-z0-9_]+$/'  // solo A–Z, a–z, 0–9 y _
+            ],
+            'email'     => ['required','email:rfc,dns','max:150','unique:users,email'],
+            'location'  => ['nullable', 'string', 'max:100'],
+            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name'      => $request->input('name'),
+            'alias'     => $request->input('alias'),
+            'email'     => $request->input('email'),
+            'location'  => $request->input('location'),
+            'password'  => Hash::make($request->input('password')),
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::homeFor($user));
     }
 }
