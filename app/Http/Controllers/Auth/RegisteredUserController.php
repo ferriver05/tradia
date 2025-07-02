@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Nnjeim\World\Models\Country;
 
 class RegisteredUserController extends Controller
 {
@@ -20,7 +21,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $countries = Country::orderBy('name')
+                            ->get(['id','name']);
+        return view('auth.register', compact('countries'));
     }
 
     /**
@@ -40,7 +43,9 @@ class RegisteredUserController extends Controller
                 'regex:/^[A-Za-z0-9_]+$/'  // solo A–Z, a–z, 0–9 y _
             ],
             'email'     => ['required','email:rfc,dns','max:150','unique:users,email'],
-            'location'  => ['nullable', 'string', 'max:100'],
+            'country_id' => ['required', 'integer','exists:countries,id'],
+            'state_id'   => ['required', 'integer','exists:states,id'],
+            'city_id'    => ['required', 'integer','exists:cities,id'],
             'password'  => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -48,7 +53,7 @@ class RegisteredUserController extends Controller
             'name'      => $request->input('name'),
             'alias'     => $request->input('alias'),
             'email'     => $request->input('email'),
-            'location'  => $request->input('location'),
+            'city_id'   => $request->input('city_id'),
             'password'  => Hash::make($request->input('password')),
         ]);
 

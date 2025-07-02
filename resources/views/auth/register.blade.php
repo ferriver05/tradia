@@ -104,8 +104,8 @@
                         </div>
                     </div>
 
-                    <!-- Segunda fila: Email y Ubicación -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Segunda fila: Email -->
+                    <div>
                         <!-- Campo de Email -->
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
@@ -126,29 +126,67 @@
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
 
-                        <!-- Campo de Ubicación (Opcional) -->
-                        <div>
-                            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">
-                                Ubicación <span class="text-gray-400 text-xs">(Opcional)</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                id="location" 
-                                name="location" 
-                                value="{{ old('location') }}"
-                                autocomplete="address-level2"
-                                maxlength="100"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('location') border-red-500 @enderror"
-                                placeholder="Ciudad, País"
-                            >
-                            @error('location')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
+                    <!-- Tercera fila: Ubicación (País, Estado, Ciudad) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Ubicación <span class="text-gray-400 text-xs">(Opcional)</span>
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <!-- País -->
+                            <div>
+                                <select 
+                                    id="country" 
+                                    name="country_id" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('country_id') border-red-500 @enderror"
+                                >
+                                    <option value="">Seleccionar País</option>
+                                    @foreach($countries as $c)
+                                        <option value="{{ $c->id }}"
+                                        {{ old('country_id') == $c->id ? 'selected' : '' }}>
+                                        {{ $c->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('country_id')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Estado -->
+                            <div>
+                                <select 
+                                    id="state" 
+                                    name="state_id" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('state_id') border-red-500 @enderror"
+                                    disabled
+                                >
+                                    <option value="">Seleccionar Estado</option>
+                                </select>
+                                @error('state_id')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Ciudad -->
+                            <div>
+                                <select 
+                                    id="city" 
+                                    name="city_id" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 @error('city_id') border-red-500 @enderror"
+                                    disabled
+                                >
+                                    <option value="">Seleccionar Ciudad</option>
+                                </select>
+                                @error('city_id')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Tercera fila: Contraseñas -->
+                    <!-- Cuarta fila: Contraseñas -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Campo de Contraseña -->
                         <div>
@@ -207,5 +245,79 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const countrySelect = document.getElementById('country');
+            const stateSelect   = document.getElementById('state');
+            const citySelect    = document.getElementById('city');
+
+            const statesUrl = "{{ route('api.states') }}";
+            const citiesUrl = "{{ route('api.cities') }}";
+
+            function fill(select, items, placeholder) {
+                select.innerHTML = `<option value="">${placeholder}</option>`;
+                items.forEach(i => {
+                    const o = document.createElement('option');
+                    o.value = i.id; o.text = i.name;
+                    select.append(o);
+                });
+            }
+
+            // Al cambiar país
+            countrySelect.addEventListener('change', async () => {
+                const cid = countrySelect.value;
+                fill(stateSelect, [], 'Seleccionar Estado');
+                stateSelect.disabled = true;
+                fill(citySelect,  [], 'Seleccionar Ciudad');
+                citySelect.disabled = true;
+
+                if (!cid) return;
+
+                try {
+                    const res = await fetch(`${statesUrl}?country_id=${cid}`);
+                    const data = await res.json();
+
+                    fill(stateSelect, data, 'Seleccionar Estado');
+                    stateSelect.disabled = false;
+                    
+                    @if(old('state_id'))
+                        stateSelect.value = "{{ old('state_id') }}";
+                        stateSelect.dispatchEvent(new Event('change'));
+                    @endif
+                } catch (e) {
+                    console.error('Error cargando estados', e);
+                }
+            });
+
+            // Al cambiar estado
+            stateSelect.addEventListener('change', async () => {
+                const sid = stateSelect.value;
+                fill(citySelect, [], 'Seleccionar Ciudad');
+                citySelect.disabled = true;
+                if (!sid) return;
+
+                try {
+                    const res = await fetch(`${citiesUrl}?state_id=${sid}`);
+                    const data = await res.json();
+
+                    fill(citySelect, data, 'Seleccionar Ciudad');
+                    citySelect.disabled = false;
+
+                    @if(old('city_id'))
+                        citySelect.value = "{{ old('city_id') }}";
+                    @endif
+                } catch (e) {
+                    console.error('Error cargando ciudades', e);
+                }
+            });
+
+            // Si venían valores old(), dispara chain
+            @if(old('country_id'))
+                countrySelect.value = "{{ old('country_id') }}";
+                countrySelect.dispatchEvent(new Event('change'));
+            @endif
+        });
+    </script>
 </body>
 </html>
