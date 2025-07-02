@@ -42,9 +42,7 @@ require __DIR__.'/auth.php';
 
 // RUTAS PROTEGIDAS PARA ADMIN
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin-dashboard');
+    // Aqui va la ruta
 });
 
 // RUTAS PROTEGIDAS PARA MODERADOR
@@ -54,7 +52,5 @@ Route::middleware(['auth', 'role:mod'])->group(function () {
 
 // RUTAS PROTEGIDAS PARA USUARIO
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/user/dashboard', function () {
-        return view('mod.dashboard');
-    })->name('mod-dashboard');
+    // Aqui va la ruta
 });
