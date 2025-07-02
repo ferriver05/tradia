@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// APIs
+// REGISTER
+Route::get('/api/states',  [LocationController::class, 'states'])->name('api.states');
+Route::get('/api/cities',  [LocationController::class, 'cities'])->name('api.cities');
 
 // AUTH and INITIAL SETUP ROUTES
 

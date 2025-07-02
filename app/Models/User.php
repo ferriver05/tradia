@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Nnjeim\World\Models\City;
 
 class User extends Authenticatable
 {
@@ -25,7 +26,7 @@ class User extends Authenticatable
         'password',
         'profile_picture',
         'bio',
-        'location',
+        'city_id',
     ];
 
     /**
@@ -63,5 +64,10 @@ class User extends Authenticatable
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function cities(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 }
