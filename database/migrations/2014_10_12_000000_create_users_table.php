@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('role', ['user', 'mod', 'admin'])->default('user');
             $table->text('profile_picture')->nullable();
             $table->text('bio')->nullable();
-            $table->string('location', 100)->nullable();
+            $table->foreignId('city_id')->constrained();
             $table->integer('reputation')->default(0);
             $table->enum('status', ['active', 'suspended', 'inactive'])->default('active');
             $table->timestamps();

@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\GarajeController;
+use App\Http\Controllers\VitrinaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,3 +56,16 @@ Route::middleware(['auth', 'role:mod'])->group(function () {
 Route::middleware(['auth', 'role:user'])->group(function () {
     // Aqui va la ruta
 });
+
+// RUTAS DE ITEMS
+Route::resource('garaje', GarajeController::class)
+    ->parameters(['garaje' => 'item']);
+
+Route::patch('/garaje/{item}/pausar', [GarajeController::class, 'pause'])
+    ->name('garaje.pause');
+
+Route::patch('/garaje/{item}/reactivar', [GarajeController::class, 'reactivate'])
+    ->name('garaje.reactivate'); 
+
+Route::resource('vitrina', VitrinaController::class)
+    ->parameters(['vitrina' => 'item']);

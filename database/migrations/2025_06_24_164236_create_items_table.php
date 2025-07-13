@@ -19,8 +19,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->enum('item_condition', ['new', 'like_new', 'used', 'damaged']);
             $table->text('exchange_preferences')->nullable();
-            $table->string('location', 100)->nullable();
-            $table->enum('status', ['active', 'pending_request', 'exchanged'])->default('active');
+            $table->enum('status', ['active', 'paused', 'traded'])->default('active');
             $table->timestamps();
         });
     }
