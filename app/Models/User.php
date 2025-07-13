@@ -8,7 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\belongsTo;
 use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\State;
+use Nnjeim\World\Models\Country;
 
 class User extends Authenticatable
 {
@@ -69,5 +72,27 @@ class User extends Authenticatable
     public function cities(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function getFullLocationAttribute()
+    {
+        if (!$this->city_id) {
+            return null;
+        }
+
+        $city = City::find($this->city_id);
+        $state = $city?->state_id ? State::find($city->state_id) : null;
+        $country = $city?->country_id ? Country::find($city->country_id) : null;
+
+        $stateName = $state?->name;
+        if ($stateName) {
+            $stateName = str_replace([' Department', ' department', ' Departamento'], '', $stateName);
+        }
+
+        return collect([
+            $city?->name,
+            $stateName,
+            $country?->name,
+        ])->filter()->join(', ');
     }
 }
