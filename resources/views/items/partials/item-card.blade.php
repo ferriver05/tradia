@@ -63,7 +63,9 @@
                    class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition-colors">
                     Ver
                 </a>
-                @include('items.partials.dropdown', ['item' => $item])
+                @if ($contexto === 'garaje')
+                    @include('items.partials.dropdown', ['item' => $item])
+                @endif
             </div>
         </div>
     </div>
