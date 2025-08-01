@@ -23,9 +23,9 @@ class RouteServiceProvider extends ServiceProvider
     public static function homeFor(User $user): string
     {
         return match($user->role) {
-            'admin' => '/admin/dashboard',
-            'mod'   => '/mod/dashboard',
-            default => '/dashboard',
+            'admin' => '/admin/inicio',
+            'mod'   => '/mod/inicio',
+            default => '/inicio',
         };
     }
 

@@ -151,20 +151,28 @@
                 <div class="pt-4 border-t">
                     <div class="flex flex-wrap gap-3 justify-center md:justify-start">
 
-                        @if($esPropietario)
-                            @include('items.garaje.partials.buttons', ['item' => $item, 'estado' => $estado])
-                        @else
-                            @include('items.vitrina.partials.buttons', ['item' => $item, 'estado' => $estado])
-                        @endif
+                        @switch($contexto)
+                            @case('garaje')
+                                @include('items.garaje.partials.buttons', ['item' => $item, 'estado' => $estado])
+                                @break
+
+                            @case('vitrina')
+                                @include('items.vitrina.partials.buttons', ['item' => $item, 'estado' => $estado])
+                                @break
+                        @endswitch
+
 
                         @php
-                            $volverA = request('from') === 'vitrina'
-                                ? route('vitrina.index')
-                                : route('garaje.index');
+                            $volverA = match($contexto) {
+                                'vitrina' => route('vitrina.index'),
+                                'garaje' => route('garaje.index'),
+                                'confirmacion' => route('exchange-requests.pending'),
+                                default => route('dashboard'),
+                            };
                         @endphp
 
                         <a href="{{ $volverA }}"
-                        class="flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors">
+                        class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
                             <i class="fas fa-arrow-left"></i>
                             Volver
                         </a>

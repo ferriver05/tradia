@@ -32,7 +32,7 @@ class VitrinaController extends Controller
 
         // Obtener datos de ubicación del usuario
         if ($user_city_id) {
-            $city = \Nnjeim\World\Models\City::find($user_city_id);
+            $city = City::find($user_city_id);
             $user_state_id = $city?->state_id;
             $user_country_id = $city?->country_id;
         }
@@ -46,6 +46,10 @@ class VitrinaController extends Controller
             })
             ->whereDoesntHave('exchangeRequests', function($q) {
                 $q->where('status', 'accepted');
+            })
+            ->whereDoesntHave('exchangeRequests', function($q) use ($user) {
+                $q->where('requester_id', $user->id)
+                ->where('status', 'pending');
             });
 
         // Filtros adicionales del usuario (búsqueda, condición, categoría)
@@ -96,7 +100,7 @@ class VitrinaController extends Controller
                 $found_ids = $cityItems->pluck('id')->all();
 
                 // 2. Estado (pero no ciudad)
-                $city_ids_estado = \Nnjeim\World\Models\City::where('state_id', $user_state_id)->pluck('id')->all();
+                $city_ids_estado = City::where('state_id', $user_state_id)->pluck('id')->all();
                 $stateItems = (clone $baseQuery)
                     ->whereHas('user', function ($q) use ($city_ids_estado, $user_city_id) {
                         $q->whereIn('city_id', $city_ids_estado)
@@ -121,7 +125,7 @@ class VitrinaController extends Controller
                 $found_ids = $cityItems->pluck('id')->all();
 
                 // 2. Estado (pero no ciudad)
-                $city_ids_estado = \Nnjeim\World\Models\City::where('state_id', $user_state_id)->pluck('id')->all();
+                $city_ids_estado = City::where('state_id', $user_state_id)->pluck('id')->all();
                 $stateItems = (clone $baseQuery)
                     ->whereHas('user', function ($q) use ($city_ids_estado, $user_city_id) {
                         $q->whereIn('city_id', $city_ids_estado)
@@ -134,7 +138,7 @@ class VitrinaController extends Controller
                 $found_ids = array_merge($found_ids, $stateItems->pluck('id')->all());
 
                 // 3. País (pero no estado ni ciudad)
-                $city_ids_pais = \Nnjeim\World\Models\City::where('country_id', $user_country_id)->pluck('id')->all();
+                $city_ids_pais = City::where('country_id', $user_country_id)->pluck('id')->all();
                 $countryItems = (clone $baseQuery)
                     ->whereHas('user', function ($q) use ($city_ids_pais, $city_ids_estado, $user_city_id) {
                         $q->whereIn('city_id', $city_ids_pais)
@@ -243,7 +247,7 @@ class VitrinaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Item $item)
+    public function show(Item $item, Request $request)
     {
         $item = Item::with(['photos', 'category', 'user'])->findOrFail($item->id);
 
@@ -252,8 +256,11 @@ class VitrinaController extends Controller
 
         $ubicacion = $item->user->full_location ?? 'No disponible';
 
-        return view('items.show', compact('item', 'estado', 'esPropietario', 'ubicacion'));
+        $contexto = $request->input('contexto', 'vitrina');
+
+        return view('items.show', compact('item', 'estado', 'esPropietario', 'ubicacion', 'contexto'));
     }
+
 
     /**
      * Show the form for editing the specified resource.

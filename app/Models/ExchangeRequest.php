@@ -19,6 +19,10 @@ class ExchangeRequest extends Model
         'offered_item_id',
         'status',
         'observations',
+        'confirmed_by_requester',
+        'confirmed_by_owner',
+        'cancelled_by_requester',
+        'cancelled_by_owner',
     ];
 
     protected $casts = [

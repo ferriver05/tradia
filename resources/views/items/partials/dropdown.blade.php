@@ -44,22 +44,50 @@
 
             {{-- Ver mi oferta (NO protegido) --}}
             @if ($estado === 'ofrecido')
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver mi oferta</a>
+                @php
+                    $exchangeRequest = $item->exchangeOffers()->latest()->first();
+                @endphp
+                @if($exchangeRequest)
+                    <a href="{{ route('intercambios.show', $exchangeRequest->id) }}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Ver mi oferta
+                    </a>
+                @endif
             @endif
 
             {{-- Ver solicitudes (NO protegido) --}}
             @if ($estado === 'solicitado')
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver solicitudes</a>
+                <a href="{{ route('intercambios.index', ['tipo' => 'requested', 'item_id' => $item->id]) }}"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Ver solicitudes
+                </a>
             @endif
 
             {{-- Ver match (NO protegido) --}}
             @if ($estado === 'en_match')
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver match</a>
+                @php
+                    $exchangeRequest = $item->exchangeRequests()->where('status', 'accepted')->latest()->first();
+                @endphp
+                @if($exchangeRequest)
+                    <a href="{{ route('intercambios.show', $exchangeRequest->id) }}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Ver match
+                    </a>
+                @endif
             @endif
 
             {{-- Ver intercambio (NO protegido) --}}
             @if ($estado === 'intercambiado')
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver intercambio</a>
+                @php
+                    $exchangeRequest = $item->exchangeRequests()->where('status', 'completed')->latest()->first()
+                        ?? $item->exchangeOffers()->where('status', 'completed')->latest()->first();
+                @endphp
+                @if($exchangeRequest)
+                    <a href="{{ route('intercambios.show', $exchangeRequest->id) }}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Ver intercambio
+                    </a>
+                @endif
             @endif
 
             {{-- Eliminar --}}
@@ -68,11 +96,6 @@
                     <a href="#" @click.prevent="open = true" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Eliminar</a>
                 @endif
             @endcan
-
-        @else
-            {{-- Dropdown limitado para vitrina --}}
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ver perfil</a>
-            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Proponer oferta</a>
         @endif
     </div>
 

@@ -120,4 +120,22 @@ class ItemPolicy
     {
         return $user->id === $item->user_id;
     }
+
+    /**
+     * Determine whether the user can request an exchange for the model.
+     */
+    public function request(User $user, Item $item): bool
+    {
+        // No puedes solicitar tu propio objeto
+        if ($user->id === $item->user_id) {
+            return false;
+        }
+
+        // Solo puedes solicitar objetos activos
+        if ($item->status !== 'active') {
+            return false;
+        }
+
+        return true;
+    }
 }
