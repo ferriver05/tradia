@@ -129,7 +129,6 @@
                             @enderror
                         </div>
 
-                        <!-- Área de miniaturas (carrusel visual) -->
                         <div>
                             <h4 class="text-sm font-medium text-gray-700 mb-3">Vista previa de fotos</h4>
                             <div id="preview" class="flex space-x-3 overflow-x-auto pb-2"></div>
@@ -137,6 +136,10 @@
                         </div>
                     </div>
                 </div>
+
+                @if(isset($redirectTo))
+                    <input type="hidden" name="redirect_to" value="{{ $redirectTo }}">
+                @endif
 
                 <!-- Botones de acción -->
                 <div class="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-gray-200 gap-4">

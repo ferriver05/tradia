@@ -41,30 +41,57 @@
 
         {{-- Botón Ver solicitudes --}}
         @if ($estado === 'solicitado')
-            <a href="#"
+            <a href="{{ route('intercambios.index', ['tipo' => 'requested', 'item_id' => $item->id]) }}"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                 <i class="fas fa-eye"></i>
                 Ver solicitudes
             </a>
         @endif
 
+        {{-- Botón Ver oferta --}}
+        @if ($estado === 'ofrecido')
+            @php
+                $oferta = $item->exchangeOffers()->where('status', 'pending')->first();
+            @endphp
+            @if ($oferta)
+                <a href="{{ route('intercambios.show', $oferta->id) }}"
+                class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                    <i class="fas fa-paper-plane"></i>
+                    Ver oferta
+                </a>
+            @endif
+        @endif
+
         {{-- Botón Ver match --}}
         @if ($estado === 'en_match')
-            <a href="#"
-            class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                <i class="fas fa-handshake"></i>
-                Ver match
-            </a>
+            @php
+                $match = $item->exchangeOffers()->where('status', 'accepted')->first()
+                    ?? $item->exchangeRequests()->where('status', 'accepted')->first();
+            @endphp
+            @if ($match)
+                <a href="{{ route('intercambios.show', $match->id) }}"
+                class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-handshake"></i>
+                    Ver match
+                </a>
+            @endif
         @endif
 
         {{-- Botón Ver intercambio --}}
         @if ($estado === 'intercambiado')
-            <a href="#"
-            class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
-                <i class="fas fa-archive"></i>
-                Ver intercambio
-            </a>
+            @php
+                $intercambio = $item->exchangeOffers()->where('status', 'completed')->first()
+                            ?? $item->exchangeRequests()->where('status', 'completed')->first();
+            @endphp
+            @if ($intercambio)
+                <a href="{{ route('intercambios.show', $intercambio->id) }}"
+                class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-archive"></i>
+                    Ver intercambio
+                </a>
+            @endif
         @endif
+
 
         {{-- Botón Eliminar --}}
         @if (in_array($estado, ['activo', 'solicitado', 'pausado']))

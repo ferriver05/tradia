@@ -75,12 +75,14 @@ class GarajeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $categories = Category::orderBy('name')->get();
         $conditions = Item::CONDITIONS;
         
-        return view('items.garaje.create', compact('categories', 'conditions'));
+        return view('items.garaje.create', compact('categories', 'conditions') + [
+            'redirectTo' => $request->redirect_to,
+        ]);
     }
 
     /**
@@ -119,8 +121,8 @@ class GarajeController extends Controller
             }
         }
 
-        return redirect()->route('garaje.index')
-            ->with('success', '¡Objeto publicado correctamente!');
+        return redirect()->to($request->input('redirect_to', route('garaje.index')))
+            ->with('status', 'Objeto publicado con éxito.');
     }
 
     /**
@@ -136,7 +138,8 @@ class GarajeController extends Controller
 
         $estado = $item->visualStatus();
 
-        return view('items.show', compact('item', 'estado', 'esPropietario', 'ubicacion'));
+        return view('items.show', compact('item', 'estado', 'esPropietario', 'ubicacion'))
+        ->with('contexto','garaje');
     }
 
     /**

@@ -100,7 +100,7 @@ class Item extends Model
 
     public function visualStatus(): string
     {
-        if ($this->status === 'exchanged') return 'intercambiado';
+        if ($this->status === 'traded') return 'intercambiado';
         if ($this->status === 'paused') return 'pausado';
         if ($this->hasMatchConfirmed()) return 'en_match';
         if ($this->isBeingRequested()) return 'solicitado';
@@ -150,6 +150,14 @@ class Item extends Model
                     });
             })
             ->exists();
+    }
+
+    public function scopeAvailableForTrade($query)
+    {
+        return $query->where('status', 'active')
+            ->whereDoesntHave('exchangeOffers', function ($q) {
+                $q->whereIn('status', ['pending', 'accepted']);
+            });
     }
 
 }

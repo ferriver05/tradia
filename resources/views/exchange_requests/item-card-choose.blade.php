@@ -3,7 +3,9 @@
 @endphp
 
 <div class="rounded-lg shadow-md overflow-visible hover:shadow-lg transition-shadow flex flex-col h-full
-    {{ $isPaused ? 'bg-gray-100' : 'bg-white' }}">
+    {{ $isPaused ? 'bg-gray-100' : 'bg-white' }} border border-gray-200">
+    
+    {{-- Imagen principal --}}
     <div class="relative">
         <img 
             src="{{ $item->photos->first() ? asset('storage/' . $item->photos->first()->photo_url) : 'https://via.placeholder.com/400x250' }}" 
@@ -22,8 +24,10 @@
             {{ ucfirst(str_replace('_', ' ', $item->visualStatus())) }}
         </span>
     </div>
+
+    {{-- Contenido --}}
     <div class="p-4 flex flex-col flex-1 justify-between">
-        <!-- Contenido principal: Título y descripción -->
+        <!-- Título y descripción -->
         <div>
             <h3 class="text-lg font-semibold mb-2 break-words line-clamp-2 {{ $isPaused ? 'text-gray-400' : 'text-gray-900' }}">
                 {{ $item->title }}
@@ -32,40 +36,20 @@
                 {{ $item->description }}
             </p>
         </div>
-        <!-- Footer SIEMPRE abajo -->
+
+        <!-- Footer con fecha y botón Seleccionar -->
         <div>
             <p class="text-gray-500 text-xs mb-4">
-                @php
-                    $ubicacion = $item->user->full_location ?? 'No disponible';
-                @endphp
-
-                @if (($context ?? null) === 'vitrina')
-                    <span class="inline-flex items-center gap-1 break-words line-clamp-2">
-                        <i class="fas fa-map-marker-alt"></i>
-                        {{ $ubicacion }}
-                    </span>
-                @elseif ($item->visualStatus() === 'intercambiado')
-                    Intercambiado {{ $item->updated_at->diffForHumans() }}
-                @else
-                    Publicado {{ $item->created_at->diffForHumans() }}
-                @endif
+                Publicado {{ $item->created_at->diffForHumans() }}
             </p>
-            <div class="flex justify-between items-center">
 
-                @php
-                    $contexto = $context ?? 'garaje';
-                    $rutaShow = $contexto === 'vitrina'
-                        ? route('vitrina.show', $item)
-                        : route('garaje.show', $item);
-                @endphp
-                <a href="{{ $rutaShow }}?from={{ $contexto }}"
-                   class="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition-colors">
-                    Ver
-                </a>
-                @if ($contexto === 'garaje')
-                    @include('items.partials.dropdown', ['item' => $item])
-                @endif
-            </div>
+            <a href="{{ route('intercambios.create', [
+                    'requested_item_id' => $requestedItem->id,
+                    'offered_item_id' => $item->id,
+                ]) }}"
+                class="block w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium text-center transition-colors">
+                Seleccionar este objeto
+            </a>
         </div>
     </div>
 </div>
